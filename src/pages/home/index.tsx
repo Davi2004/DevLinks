@@ -5,6 +5,8 @@ import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import { db } from '../../services/firebaseConnection'
 import { getDocs, getDoc, collection, orderBy, query, doc } from 'firebase/firestore'
 
+import minhaImagem from '../../assets/IMG_6530.png'
+
 import { Header } from "../../components/header"
 
 interface LinkProps {
@@ -78,7 +80,8 @@ export function Home() {
 
             <Header showLogin={true}/>
             
-            <h1 className="md:text-4xl text-3xl font-bold text-white mt-20"> Davi Rocha Pereira </h1>
+            <img src={minhaImagem} className="w-60 h-60 object-cover rounded-full mt-5 animate-float shadow-xl shadow-blue-600/30"/>
+            <h1 className="md:text-4xl text-3xl font-bold text-white mt-2"> Davi Rocha Pereira </h1>
             <span className="font-bold text-gray-50 mb-5 mt-3"> Veja meus links ⬇️ </span>
 
             <main className="flex flex-col w-11/12 max-w-xl text-center">
