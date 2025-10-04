@@ -1,10 +1,12 @@
-import { useEffect, useState, type FormEvent } from "react"
+import { useEffect, useRef, useState, type FormEvent } from "react"
 import { Header } from "../../components/header"
 import { Input } from "../../components/input"
 
 import { FiTrash } from 'react-icons/fi'
+import { BiPencil } from 'react-icons/bi'
 import { db } from "../../services/firebaseConnection"
-import { addDoc, collection, onSnapshot, query, orderBy, doc, deleteDoc } from "firebase/firestore"
+import { addDoc, collection, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } from "firebase/firestore"
+import toast from "react-hot-toast"
 
 interface LinkProps {
     id: string;
@@ -21,6 +23,12 @@ export function Admin() {
     const [backgroundColorInput, setBackgroundColorInput] = useState("#003399")
 
     const [links, setLinks] = useState<LinkProps[]>([])
+    const [editData, setEditData] = useState({
+        enabled: false,
+        id: "",
+    });
+
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect( () => {
         const linksRef = collection(db, "links")
@@ -54,8 +62,13 @@ export function Admin() {
         e.preventDefault()
 
         if (nameInput === "" || urlInput === "") {
-            alert("Preencha todos os campos")
+            toast.error("Preencha todos os campos!");
             return
+        }
+
+        if (editData.enabled) {
+            handleSaveEdit();
+            return;
         }
 
         addDoc(collection(db, "links"), {
@@ -67,7 +80,7 @@ export function Admin() {
         })
 
         .then(() => {
-            console.log("Cadastrado com sucesso!")
+            toast.success("Link cadastrado com sucesso!");
             setNameInput("")
             setUrlInput("")
             setBackgroundColorInput("#003399")
@@ -75,12 +88,48 @@ export function Admin() {
         }) 
         .catch((error) => {
             console.log(`Erro ao cadastrar o link: ${error}`);
+            toast.error("Erro ao salvar o link 😢");
         })
     }
 
+    async function handleSaveEdit() {
+        const docRef = doc(db, "links", editData.id);
+
+        await updateDoc(docRef, {
+        name: nameInput,
+        url: urlInput,
+        bg: backgroundColorInput,
+        color: textColorInput,
+        });
+
+        setEditData({ enabled: false, id: "" });
+        setNameInput("");
+        setUrlInput("");
+        setBackgroundColorInput("#0000ff");
+        setTextColorInput("#ffffff");
+        toast.success("Link editado com sucesso!");
+    }    
+    
     async function handleDelete(id: string) {
         const docRef = doc(db, "links", id)
         await deleteDoc(docRef)
+        toast.success("Link excluído com sucesso!");
+    }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function handleEdit(link: any) {
+        
+        setNameInput(link.name);
+        setUrlInput(link.url);
+        setTextColorInput(link.color);
+        setBackgroundColorInput(link.bg);
+        
+        setEditData({
+            enabled: true,
+            id: link.id,
+        });
+        
+        inputRef.current?.focus();        
     }
     
     return (
@@ -93,6 +142,7 @@ export function Admin() {
                     placeholder="Nome do link..."
                     value={nameInput}
                     onChange={ (e) => setNameInput(e.target.value) }
+                    ref={inputRef}
                 />
                 
                 <label className="text-white font-medium mt-2 mb-2"> URL do Link </label>
@@ -141,7 +191,7 @@ export function Admin() {
                     className="mb-7 bg-blue-600 h-9 rounded-md text-white font-medium gap-2 flex justify-center items-center hover:bg-blue-700 transition-colors cursor-pointer"
                     type="submit"
                 >
-                    Cadastrar
+                    {editData.enabled ? "Salvar Edição" : "Cadastrar"}
                 </button>
                 
             </form>
@@ -166,7 +216,14 @@ export function Admin() {
                         >
                             {link.name}
                         </a>
-                        <div>
+                        <div className="flex items-center gap-3">
+                            <button 
+                                className="border border-dashed p-1 rounded cursor-pointer hover:bg-blue-900 transition-colors"
+                                onClick={() => handleEdit(link)}
+                            >
+                                <BiPencil size={18} color="white" />
+                            </button>
+                            
                             <button
                                 className="border border-dashed p-1 rounded cursor-pointer hover:bg-red-600 transition-colors"
                                 onClick={() => handleDelete(link.id)}
