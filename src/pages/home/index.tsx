@@ -78,7 +78,7 @@ export function Home() {
     return (
         <div className="flex flex-col w-full items-center justify-center">
 
-            <Header showLogin={true}/>
+            <Header/>
             
             <img src={minhaImagem} className="w-60 h-60 object-cover rounded-full mt-5 animate-float shadow-xl shadow-blue-600/30"/>
             <h1 className="md:text-4xl text-3xl font-bold text-white mt-2"> Davi Rocha Pereira </h1>

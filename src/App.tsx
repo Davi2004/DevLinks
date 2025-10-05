@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { NotFound } from './pages/error'
 import { Home } from './pages/home'
+import { HomeScreen } from './pages/homescreen'
 import { Admin } from './pages/admin'
 import { Login } from './pages/login'
 import { Networks } from './pages/networks'
@@ -15,7 +16,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Home />
+    element: <HomeScreen />
+  },
+  {
+    path: '/home',
+    element: <Private> <Home /> </Private>
   },
   {
     path: '/login',

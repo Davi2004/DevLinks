@@ -21,12 +21,14 @@ createRoot(document.getElementById('root')!).render(
             primary: '#22c55e', // verde
             secondary: '#333',
           },
+          duration: 2000
         },
         error: {
           iconTheme: {
             primary: '#ef4444', // vermelho
             secondary: '#333',
           },
+          duration: 2000
         },
       }}
     />
