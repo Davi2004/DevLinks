@@ -2,8 +2,9 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Header } from "../../components/header";
 import { Input } from "../../components/input";
 
-import { db } from '../../services/firebaseConnection'
+import { db, auth } from '../../services/firebaseConnection'
 import { setDoc, getDoc, doc } from 'firebase/firestore'
+import toast from "react-hot-toast";
 
 export function Networks() {
     const [facebook, setFacebook] = useState("");
@@ -12,13 +13,15 @@ export function Networks() {
         
     useEffect(() => {
         function loadLinks() {
-            const docRef = doc(db, "social", "link")
-            getDoc(docRef)
-            .then((snapshot) => {
-                if(snapshot.data() !== undefined) {
-                    setFacebook(snapshot.data()?.facebook)
-                    setWhatsapp(snapshot.data()?.whatsapp)
-                    setInstagram(snapshot.data()?.instagram)
+            const user = auth.currentUser;
+            if (!user) return;
+            const docRef = doc(db, "users", user.uid, "social", "links");
+            
+            getDoc(docRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    setFacebook(snapshot.data()?.facebook || "");
+                    setWhatsapp(snapshot.data()?.whatsapp || "");
+                    setInstagram(snapshot.data()?.instagram || "");
                 }
             })
         }
@@ -26,20 +29,24 @@ export function Networks() {
         loadLinks();
     }, [])
     
-    function handleRegister(e: FormEvent) {
+    async function handleRegister(e: FormEvent) {
         e.preventDefault();
 
-        setDoc(doc(db, "social", "link"), {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        await setDoc(doc(db, "users", user.uid, "social", "links"), {
             facebook: facebook,
             whatsapp: whatsapp,
             instagram: instagram
         })
 
         .then(() => {
-            console.log("Redes sociais cadastradas com sucesso!");
+            toast.success("Redes sociais salvas com sucesso! ✅");
         })
         .catch((error) => {
-            console.log(`Erro ao salvar ${error}`)
+            console.log(`Erro ao salvar: ${error}`);
+            toast.error("Erro ao salvar redes sociais 😢");
         })
     }
     

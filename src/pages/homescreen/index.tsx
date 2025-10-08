@@ -14,7 +14,7 @@ export function HomeScreen() {
             <p className="text-white sm:text-lg md:text-2xl"> O seu gerenciador de links para desenvolvedores </p>
 
             <span className="text-white text-xl mt-2 select-none hover:underline"> 
-                <Link to="/login"> 
+                <Link to="/register"> 
                     Vamos começar?
                 </Link> 
             </span>

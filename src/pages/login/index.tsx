@@ -46,8 +46,7 @@ export function Login() {
             </button>
             
             <h1 className="mt-11 text-white mb-7 font-bold text-6xl select-none">
-                Dev
-                <span className="relative z-10 -ml-2.5 bg-gradient-to-r from-yellow-500 to-orange-800 bg-clip-text text-transparent">Link</span>
+                <span className="relative z-10 -ml-2.5 bg-gradient-to-r from-yellow-500 to-orange-800 bg-clip-text text-transparent">Login</span>
             </h1>
 
             <form onSubmit={handleSubmit} className="w-full max-w-xl flex flex-col px-4">
@@ -72,6 +71,13 @@ export function Login() {
                 >
                     Entrar
                 </button>
+
+                <p className="text-white text-center mt-4 text-sm">
+                    Ainda não possui uma conta?{" "}
+                    <Link to="/register" className="text-blue-400 hover:underline">
+                        Crie uma conta
+                    </Link>
+                </p>
                 
             </form>
 

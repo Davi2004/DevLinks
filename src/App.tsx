@@ -5,6 +5,7 @@ import { Home } from './pages/home'
 import { HomeScreen } from './pages/homescreen'
 import { Admin } from './pages/admin'
 import { Login } from './pages/login'
+import { Cadastro } from './pages/register'
 import { Networks } from './pages/networks'
 
 import { Private } from './routes/Private'
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Cadastro />,
   },
   {
     path: '/admin',

@@ -4,7 +4,7 @@ import { Input } from "../../components/input"
 
 import { FiTrash } from 'react-icons/fi'
 import { BiPencil } from 'react-icons/bi'
-import { db } from "../../services/firebaseConnection"
+import { db, auth } from "../../services/firebaseConnection"
 import { addDoc, collection, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } from "firebase/firestore"
 import toast from "react-hot-toast"
 
@@ -31,7 +31,11 @@ export function Admin() {
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect( () => {
-        const linksRef = collection(db, "links")
+        
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const linksRef = collection(db, "users", user.uid, "links");
         const queryRef = query(linksRef, orderBy("created", "asc"))
 
         const unsub = onSnapshot(queryRef, (snapshot) => {
@@ -61,6 +65,9 @@ export function Admin() {
     function handleRegister(e: FormEvent) {
         e.preventDefault()
 
+        const user = auth.currentUser;
+        if (!user) return;
+
         if (nameInput === "" || urlInput === "") {
             toast.error("Preencha todos os campos!");
             return
@@ -71,7 +78,7 @@ export function Admin() {
             return;
         }
 
-        addDoc(collection(db, "links"), {
+        addDoc(collection(db, "users", user.uid, "links"), {
             name: nameInput,
             url: urlInput,
             bg: backgroundColorInput,
@@ -93,13 +100,16 @@ export function Admin() {
     }
 
     async function handleSaveEdit() {
-        const docRef = doc(db, "links", editData.id);
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "users", user.uid, "links", editData.id);
 
         await updateDoc(docRef, {
-        name: nameInput,
-        url: urlInput,
-        bg: backgroundColorInput,
-        color: textColorInput,
+            name: nameInput,
+            url: urlInput,
+            bg: backgroundColorInput,
+            color: textColorInput,
         });
 
         setEditData({ enabled: false, id: "" });
@@ -111,13 +121,16 @@ export function Admin() {
     }    
     
     async function handleDelete(id: string) {
-        const docRef = doc(db, "links", id)
+        
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const docRef = doc(db, "users", user.uid, "links", id);
         await deleteDoc(docRef)
         toast.success("Link excluído com sucesso!");
     }
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function handleEdit(link: any) {
+    function handleEdit(link: LinkProps) {
         
         setNameInput(link.name);
         setUrlInput(link.url);
