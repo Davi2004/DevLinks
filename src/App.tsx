@@ -9,6 +9,7 @@ import { Cadastro } from './pages/register'
 import { Networks } from './pages/networks'
 
 import { Private } from './routes/Private'
+import { Feed } from './pages/feed'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/social',
     element: <Private> <Networks /> </Private>,
+  },
+  {
+    path: '/feed',
+    element: <Feed />,
   },
 
 ])

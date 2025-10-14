@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom"
 import { Input } from "../../components/input"
 import { useState } from "react"
-import { auth } from "../../services/firebaseConnection"
+import { auth, db } from "../../services/firebaseConnection"
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { setDoc, doc } from "firebase/firestore"
 import { BiLogOut } from "react-icons/bi"
 import toast from "react-hot-toast"
 
@@ -27,6 +28,14 @@ export function Cadastro() {
             // Atualiza o nome do usuário no perfil
             await updateProfile(user, {
                 displayName: name
+            })
+
+            // 🔹 Cria o documento do usuário no Firestore
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                name: name,
+                email: user.email,
+                createdAt: new Date()
             })
 
             toast.success("Conta criada com sucesso!")

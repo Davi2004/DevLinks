@@ -86,7 +86,7 @@ export function Home() {
     }, [userId])
 
     return (
-        <div className="flex flex-col w-full items-center justify-center">
+        <div className="flex flex-col w-full items-center justify-center pb-7 px-2">
 
             <Header/>
             
